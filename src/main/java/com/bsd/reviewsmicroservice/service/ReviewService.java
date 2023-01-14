@@ -59,5 +59,7 @@ public class ReviewService {
         getReviewsByUser(userId).forEach(review -> deleteReview(review.getReviewId()));
     }
 
-
+    public void deleteReviewsByUserAndAccommodation(Long userId, Long accommodationId) {
+        getReviewsByUserAndAccommodation(userId, accommodationId).forEach(review -> deleteReview(review.getReviewId()));
+    }
 }

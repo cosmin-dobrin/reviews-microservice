@@ -46,21 +46,16 @@ public class ReviewController {
                         reviewService.getReviewsByUserAndAccommodation(userId, accommodationId)));
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<?> deleteReview(@RequestParam Long reviewId) {
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<?> deleteReviewsByAccommodation(@RequestParam Long accommodationId) {
-        reviewService.deleteReviewsByAccommodation(accommodationId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/")
-    public ResponseEntity<?> deleteReviewsByUser(@RequestParam Long userId) {
-        reviewService.deleteReviewsByUser(userId);
+    @DeleteMapping
+    public ResponseEntity<?> deleteReviewsByUserAndAccommodation(@RequestParam Long userId,
+                                                                 @RequestParam Long accommodationId) {
+        reviewService.deleteReviewsByUserAndAccommodation(userId, accommodationId);
         return ResponseEntity.ok().build();
     }
 }
