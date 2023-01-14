@@ -25,9 +25,9 @@ public class Review {
     @Column(name = "timestamp")
     private LocalDate timestamp;
 
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "accommodation_id", foreignKey = @ForeignKey(name = "FK_accommodation_resort"))
-//    private Accommodation accommodation;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "accommodation_id", foreignKey = @ForeignKey(name = "FK_review_accommodation"))
+    private Accommodation accommodation;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_review_user"))
@@ -36,11 +36,11 @@ public class Review {
     public Review() {
     }
 
-    public Review(int stars, String comment, LocalDate timestamp, User user) {
+    public Review(int stars, String comment, LocalDate timestamp, Accommodation accommodation, User user) {
         this.stars = stars;
         this.comment = comment;
         this.timestamp = timestamp;
-//        this.accommodation = accommodation;
+        this.accommodation = accommodation;
         this.user = user;
     }
 }

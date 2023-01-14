@@ -1,7 +1,6 @@
 package com.bsd.reviewsmicroservice.service;
 
-import com.bsd.reviewsmicroservice.domain.Accommodation;
-import com.bsd.reviewsmicroservice.domain.User;
+import com.bsd.reviewsmicroservice.repository.AccommodationRepository;
 import com.bsd.reviewsmicroservice.repository.ReviewRepository;
 import com.bsd.reviewsmicroservice.domain.Review;
 import com.bsd.reviewsmicroservice.domain.dto.ReviewDto;
@@ -10,8 +9,6 @@ import com.bsd.reviewsmicroservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,24 +19,28 @@ import java.util.Optional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-
     private final UserRepository userRepository;
-
+    private final AccommodationRepository accommodationRepository;
     private final ReviewFactory reviewFactory;
 
-//    private final SecurityService securityService;
-
-//    private final AccommodationRepository accommodationRepository;
-
     public Optional<Review> addReview(ReviewDto reviewDto) {
-//        User user = securityService.getLoggedInUser();
-//        Accommodation accommodation = accommodationRepository.findByAccommodationId(reviewDto.getAccommodationDto().getAccommodationId())
-//                                                             .orElseThrow(() -> new RuntimeException("Could not find ski resort with id: " + reviewDto.getAccommodationDto().getAccommodationId()));
 
-        if (userRepository.existsById(reviewDto.getUserDto().getUserId())) {
-            Review review = reviewFactory.toEntityIfUserExists(reviewDto);
+        if (checkIfAccommodationExists(reviewDto) && checkIfUserExists(reviewDto)) {
+            Review review = reviewFactory.toBaseEntity(reviewDto);
             review.setUser(userRepository.getReferenceById(reviewDto.getUserDto().getUserId()));
+            review.setAccommodation(accommodationRepository.getReferenceById(reviewDto.getAccommodationDto().getAccommodationId()));
+            return Optional.of(reviewRepository.save(review));
+        }
 
+        if (checkIfAccommodationExists(reviewDto)) {
+            Review review = reviewFactory.toEntityIfAccommodationExists(reviewDto);
+            review.setAccommodation(accommodationRepository.getReferenceById(getAccommodationId(reviewDto)));
+            return Optional.of(reviewRepository.save(review));
+        }
+
+        if (checkIfUserExists(reviewDto)) {
+            Review review = reviewFactory.toEntityIfUserExists(reviewDto);
+            review.setUser(userRepository.getReferenceById(getUserId(reviewDto)));
             return Optional.of(reviewRepository.save(review));
         }
 
@@ -65,11 +66,19 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
     }
 
-//    public void deleteReviewsByAccommodation(Long accommodationId) {
-//        getReviewsByAccommodation(accommodationId).forEach(review -> deleteReview(review.getReviewId()));
-//    }
+    private Long getAccommodationId(ReviewDto reviewDto) {
+        return reviewDto.getAccommodationDto().getAccommodationId();
+    }
 
-    public void deleteReviewsByUser(Long userId) {
-        getReviewsByUser(userId).forEach(review -> deleteReview(review.getReviewId()));
+    private Long getUserId(ReviewDto reviewDto) {
+        return reviewDto.getUserDto().getUserId();
+    }
+
+    private boolean checkIfUserExists(ReviewDto reviewDto) {
+        return userRepository.existsById(getUserId(reviewDto));
+    }
+
+    private boolean checkIfAccommodationExists(ReviewDto reviewDto) {
+        return accommodationRepository.existsById(getAccommodationId(reviewDto));
     }
 }
