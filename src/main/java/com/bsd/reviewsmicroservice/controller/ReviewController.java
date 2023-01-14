@@ -7,12 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController
@@ -21,7 +15,6 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
     private final ReviewTranslator reviewTranslator;
 
     @PostMapping
@@ -38,34 +31,36 @@ public class ReviewController {
                         reviewService.getReviewsByUser(userId)));
     }
 
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable("reviewId") Long reviewId) {
+    @GetMapping("/by-accommodation")
+    public ResponseEntity<List<ReviewDto>> getReviewsByAccommodation(@RequestParam Long accommodationId) {
+        return ResponseEntity.ok(
+                reviewTranslator.generateReviewDtoList(
+                        reviewService.getReviewsByAccommodation(accommodationId)));
+    }
+
+    @GetMapping("/by-user-accommodation")
+    public ResponseEntity<List<ReviewDto>> getReviewsByUserAndAccommodation(@RequestParam Long userId,
+                                                                            @RequestParam Long accommodationId) {
+        return ResponseEntity.ok(
+                reviewTranslator.generateReviewDtoList(
+                        reviewService.getReviewsByUserAndAccommodation(userId, accommodationId)));
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteReview(@RequestParam Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok().build();
     }
 
-    //    @GetMapping("/by-accommodation")
-//    public ResponseEntity<List<ReviewDto>> getReviewsByAccommodation(@RequestParam Long accommodationId) {
-//        return ResponseEntity.ok(
-//                reviewTranslator.generateReviewDtoList(
-//                        reviewService.getReviewsByAccommodation(accommodationId)));
-//    }
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteReviewsByAccommodation(@RequestParam Long accommodationId) {
+        reviewService.deleteReviewsByAccommodation(accommodationId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteReviewsByUser(@RequestParam Long userId) {
+        reviewService.deleteReviewsByUser(userId);
+        return ResponseEntity.ok().build();
+    }
 }
-
-
-//        URI uri = UriComponentsBuilder.fromHttpUrl("localhost:8080/users/" + userId)
-//                                      .build()
-//                                      .toUri();
-//
-//        HttpRequest request = HttpRequest.newBuilder()
-//                                         .uri(uri)
-//                                         .method("GET", HttpRequest.BodyPublishers.noBody())
-//                                         .build();
-
-//        HttpResponse<String> response = HttpClient.newHttpClient()
-//                                                  .send(request, HttpResponse.BodyHandlers.ofString());
-//        System.out.println(response.body());
-
-//        JSONArray income = JsonPath.parse(response.body()).read("$.");
-
-//        System.out.println(income);

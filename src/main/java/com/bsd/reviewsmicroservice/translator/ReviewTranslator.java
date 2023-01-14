@@ -12,10 +12,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewTranslator {
 
-//    private final SkiResortTranslator skiResortTranslator;
-
-    private final UserTranslator userTranslator;
-
     public ReviewDto generateReviewDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
 
@@ -23,8 +19,8 @@ public class ReviewTranslator {
         reviewDto.setStars(review.getStars());
         reviewDto.setComment(review.getComment());
         reviewDto.setTimestamp(review.getTimestamp());
-//        reviewDto.setSkiResortDto(skiResortTranslator.generateSkiResortDto(review.getSkiResort()));
-        reviewDto.setUserDto(userTranslator.generateUserDto(review.getUser()));
+        reviewDto.setUserId(review.getUserId());
+        reviewDto.setAccommodationId(review.getAccommodationId());
 
         return reviewDto;
     }

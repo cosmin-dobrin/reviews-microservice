@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReviewFactory {
 
-//    private final AccommodationFactory accommodationFactory;
-
-    private final UserFactory userFactory;
-
     public Review toEntity(ReviewDto reviewDto) {
         Review review = new Review();
 
@@ -20,20 +16,8 @@ public class ReviewFactory {
         review.setStars(reviewDto.getStars());
         review.setComment(reviewDto.getComment());
         review.setTimestamp(reviewDto.getTimestamp());
-//        review.setAccommodationFactory(accommodationFactory.toEntity(reviewDto.getAccommodationDto()));
-        review.setUser(userFactory.toEntity(reviewDto.getUserDto()));
-
-        return review;
-    }
-
-    public Review toEntityIfUserExists(ReviewDto reviewDto) {
-        Review review = new Review();
-
-        review.setReviewId(reviewDto.getReviewId());
-        review.setStars(reviewDto.getStars());
-        review.setComment(reviewDto.getComment());
-        review.setTimestamp(reviewDto.getTimestamp());
-//        review.setAccommodationFactory(accommodationFactory.toEntity(reviewDto.getAccommodationDto()));
+        review.setUserId(reviewDto.getUserId());
+        review.setAccommodationId(reviewDto.getAccommodationId());
 
         return review;
     }

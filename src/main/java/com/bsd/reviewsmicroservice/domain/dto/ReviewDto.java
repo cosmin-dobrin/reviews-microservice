@@ -18,9 +18,7 @@ public class ReviewDto {
 
     public LocalDate timestamp;
 
-//    @JsonProperty("accommodation")
-//    public AccommodationDto accommodationDto;
+    public Long accommodationId;
 
-    @JsonProperty("user")
-    public UserDto userDto;
+    public Long userId;
 }
