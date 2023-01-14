@@ -31,9 +31,31 @@ public class ReviewController {
                         reviewService.getReviewsByUser(userId)));
     }
 
+    @GetMapping("/by-accommodation")
+    public ResponseEntity<List<ReviewDto>> getReviewsByAccommodation(@RequestParam Long accommodationId) {
+        return ResponseEntity.ok(
+                reviewTranslator.generateReviewDtoList(
+                        reviewService.getReviewsByAccommodation(accommodationId)));
+    }
+
+    @GetMapping("/by-user-accommodation")
+    public ResponseEntity<List<ReviewDto>> getReviewsByUserAndAccommodation(@RequestParam Long userId,
+                                                                            @RequestParam Long accommodationId) {
+        return ResponseEntity.ok(
+                reviewTranslator.generateReviewDtoList(
+                        reviewService.getReviewsByUserAndAccommodation(userId, accommodationId)));
+    }
+
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable("reviewId") Long reviewId) {
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteReviewsByUserAndAccommodation(@RequestParam Long userId,
+                                                                 @RequestParam Long accommodationId) {
+        reviewService.deleteReviewsByUserAndAccommodation(userId, accommodationId);
         return ResponseEntity.ok().build();
     }
 }

@@ -8,6 +8,7 @@ import com.bsd.reviewsmicroservice.factory.ReviewFactory;
 import com.bsd.reviewsmicroservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,16 +48,24 @@ public class ReviewService {
        return Optional.of(reviewRepository.save(reviewFactory.toEntity(reviewDto)));
     }
 
-//    @Transactional
-//    public List<Review> getReviewsByAccommodation(Long accommodationId) {
-//        List<Review> reviews = reviewRepository.findAllByAccommodationAccommodationId(accommodationId);
-//        reviews.sort(Collections.reverseOrder(Comparator.comparing(Review::getReviewId)));
-//
-//        return reviews;
-//    }
+    @Transactional
+    public List<Review> getReviewsByAccommodation(Long accommodationId) {
+        List<Review> reviews = reviewRepository.findAllByAccommodationAccommodationId(accommodationId);
+        reviews.sort(Collections.reverseOrder(Comparator.comparing(Review::getReviewId)));
 
+        return reviews;
+    }
+
+    @Transactional
     public List<Review> getReviewsByUser(Long userId) {
         List<Review> reviews = reviewRepository.findAllByUserUserId(userId);
+        reviews.sort(Collections.reverseOrder(Comparator.comparing(Review::getReviewId)));
+
+        return reviews;
+    }
+    @Transactional
+    public List<Review> getReviewsByUserAndAccommodation(Long userId, Long accommodationId) {
+        List<Review> reviews = reviewRepository.findAllByUserUserIdAndAccommodationAccommodationId(userId, accommodationId);
         reviews.sort(Collections.reverseOrder(Comparator.comparing(Review::getReviewId)));
 
         return reviews;
@@ -65,6 +74,19 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         reviewRepository.deleteById(reviewId);
     }
+
+    public void deleteReviewsByAccommodation(Long accommodationId) {
+        getReviewsByAccommodation(accommodationId).forEach(review -> deleteReview(review.getReviewId()));
+    }
+
+    public void deleteReviewsByUser(Long userId) {
+        getReviewsByUser(userId).forEach(review -> deleteReview(review.getReviewId()));
+    }
+
+    public void deleteReviewsByUserAndAccommodation(Long userId, Long accommodationId) {
+        getReviewsByUserAndAccommodation(userId, accommodationId).forEach(review -> deleteReview(review.getReviewId()));
+    }
+
 
     private Long getAccommodationId(ReviewDto reviewDto) {
         return reviewDto.getAccommodationDto().getAccommodationId();
